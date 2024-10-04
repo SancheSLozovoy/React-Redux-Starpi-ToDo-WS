@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../state/store';
 import { loadTasks, markAllTasks, toggleTask, addTask as addTaskAction, deleteTask, updateTask } from '../../state/todoSlice';
 
-
 const TaskList: React.FC = () => {
     const dispatch: AppDispatch = useDispatch(); 
     const tasks = useSelector((state: RootState) => state.tasks);
@@ -27,12 +26,17 @@ const TaskList: React.FC = () => {
     }, [tasks, selectedUserId]);
 
     const handleAddTask = () => {
+        if (selectedUserId === null) {
+            alert('Please select a user before adding a task.');
+            return;
+        }
+    
         const title = prompt('Enter a task title');
-        if (title) {
-            const userId = selectedUserId || 1;
-            dispatch(addTaskAction({ title, userId }));
+        if (title && selectedUserId) {
+            dispatch(addTaskAction({ title, userId: selectedUserId }));
         }
     };
+    
 
     const deleteMarks = async () => {
         const tasksToDelete = tasks.filter(task => task.completed && (!selectedUserId || task.userId === selectedUserId));
