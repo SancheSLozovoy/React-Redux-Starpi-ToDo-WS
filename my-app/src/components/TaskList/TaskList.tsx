@@ -40,7 +40,7 @@ const TaskList: React.FC = () => {
     const deleteMarks = async () => {
         const tasksToDelete = tasks.filter(task => task.completed && (!selectedUserId || task.userId === selectedUserId));
         try {
-            await Promise.all(tasksToDelete.map(task => dispatch(deleteTask({ id: task.id }))));
+            await Promise.all(tasksToDelete.map(task => dispatch(deleteTask({ documentId: task.documentId }))));
 
         } catch (error) {
             console.error('Error deleting tasks', error);
@@ -60,11 +60,11 @@ const TaskList: React.FC = () => {
             </ButtonContainer>
             <TasksList>
                 {filterTasks.map(task => (
-                    <Task key={task.id}
+                    <Task key={task.documentId}
                         {...task}
-                        onToggle={() => dispatch(toggleTask(task.id))}
-                        onEdit={(id, newTitle) => dispatch(updateTask({ id, title: newTitle, userId: task.userId, completed: task.completed }))}
-                        onDelete={() => dispatch(deleteTask({ id: task.id }))} />
+                        onToggle={() => dispatch(toggleTask(task.documentId))}
+                        onEdit={(documentId, newTitle) => dispatch(updateTask({ documentId, title: newTitle, userId: task.userId, completed: task.completed }))}
+                        onDelete={() => dispatch(deleteTask({ documentId: task.documentId }))} />
                 ))}
             </TasksList>
         </TasksContainer>

@@ -4,19 +4,20 @@ import { TaskProps } from '../../types/Task.type';
 import { TaskContainer, TaskContent, TaskTitle, Checkbox, Button, ChangeButton, ButtonContainer } from './TaskStyle';
 import { TaskService } from '../../service/TaskService';
 
-const Task: React.FC<TaskProps> = ({ id, title, completed, userId, onToggle, onDelete, onEdit }) => {
+const Task: React.FC<TaskProps> = ({ documentId, title, completed, userId, onToggle, onDelete, onEdit }) => {
 
     const handleEdit = () => {
         const newTitle = prompt("Edit task title", title);
         if (newTitle && newTitle.trim() !== "") {
-            onEdit(id, newTitle.trim());
+            onEdit(documentId, newTitle.trim());
         }
     };
 
     const handleToggle = async () => {
-        await TaskService.updateTask(id, title, completed, userId);
-        onToggle(id)
-    }
+        const newCompletedState = !completed;
+        await TaskService.updateTask(documentId, title, newCompletedState, userId);
+        onToggle(documentId);
+    };
 
     return (
         <TaskContainer>
@@ -24,7 +25,7 @@ const Task: React.FC<TaskProps> = ({ id, title, completed, userId, onToggle, onD
                 <TaskTitle completed={completed}>{title}</TaskTitle>
                 <ButtonContainer>
                     <Checkbox type="checkbox" checked={completed} onChange={handleToggle} />
-                    <Button onClick={() => onDelete(id)}>Delete</Button>
+                    <Button onClick={() => onDelete(documentId)}>Delete</Button>
                     <ChangeButton className="change-button" onClick={handleEdit}>Change</ChangeButton>
                 </ButtonContainer>
             </TaskContent>

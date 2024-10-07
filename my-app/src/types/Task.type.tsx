@@ -1,11 +1,11 @@
 interface TaskProps {
-    id: number;
+    documentId: string;
     title: string;
     completed: boolean;
     userId: number;
-    onToggle: (id: number) => void;
-    onDelete: (id: number) => void;
-    onEdit: (id: number, title: string) => void;
+    onToggle: (documentId: string) => void;
+    onDelete: (documentId: string) => void;
+    onEdit: (documentId: string, title: string) => void;
 }
 
 interface TaskState {

@@ -16,39 +16,38 @@ export const addTask = createAsyncThunk<TaskProps, { title: string; userId: numb
     }
 );
 
-export const deleteTask = createAsyncThunk<void, { id: number }>(
+export const deleteTask = createAsyncThunk<void, { documentId: string }>(
     'tasks/deleteTask',
-    async function ({ id }) {
-        await TaskService.deleteTask(id);
+    async function ({ documentId }) {
+        await TaskService.deleteTask(documentId);
     }
 );
 
-export const updateTask = createAsyncThunk<TaskProps, { id: number; title: string, completed: boolean, userId: number }>(
+export const updateTask = createAsyncThunk<TaskProps, { documentId: string; title: string; completed: boolean; userId: number }>(
     'tasks/updateTask',
-    async function ({ id, title, completed, userId }) {
-        const taskToUpdate = await TaskService.updateTask(id, title, completed, userId);
+    async function ({ documentId, title, completed, userId }) {
+        const taskToUpdate = await TaskService.updateTask(documentId, title, completed, userId);
         return taskToUpdate;
     }
 );
-
 
 const todoSlice = createSlice({
     name: 'todo',
     initialState: [] as TaskProps[],
     reducers: {
-        toggleTask: (state, action: PayloadAction<number>) => {
-            const task = state.find(task => task.id === action.payload)
+        toggleTask: (state, action: PayloadAction<string>) => { 
+            const task = state.find(task => task.documentId === action.payload); 
             if (task) {
-                task.completed = !task.completed
+                task.completed = !task.completed;
             }
         },
         markAllTasks: (state, action: PayloadAction<number | null>) => {
             const userId = action.payload;
             state.forEach(task => {
                 if (task.userId === userId) {
-                    task.completed = true
+                    task.completed = true;
                 }
-            })
+            });
         }
     },
     extraReducers: (builder) => {
@@ -60,10 +59,10 @@ const todoSlice = createSlice({
                 state.push(action.payload);
             })
             .addCase(deleteTask.fulfilled, (state, action) => {
-                return state.filter(task => task.id !== action.meta.arg.id);
+                return state.filter(task => task.documentId !== action.meta.arg.documentId); 
             })
             .addCase(updateTask.fulfilled, (state, action) => {
-                const index = state.findIndex(task => task.id === action.payload.id);
+                const index = state.findIndex(task => task.documentId === action.payload.documentId); 
                 if (index !== -1) {
                     state[index] = action.payload;
                 }
