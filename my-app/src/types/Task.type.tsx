@@ -2,7 +2,7 @@ interface TaskProps{
     id: number;
     title : string;
     completed: boolean;
-    userId  :number;
+    userId:number;
     onToggle: (id: number) => void;
     onDelete: (id: number) =>void;
     onEdit: (id: number, title: string) => void;
