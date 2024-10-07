@@ -4,7 +4,7 @@ import { BASE_URL } from './Base.url';
 export class TaskService {
     static loadTasks = async () => {
         const response = await axios.get(BASE_URL);
-        return response.data.data; 
+        return response.data.data;
     };
 
     static deleteTask = async (id: number) => {
@@ -19,7 +19,7 @@ export class TaskService {
                 userId,
             },
         });
-        return response.data.data; 
+        return response.data.data;
     };
 
     static updateTask = async (id: number, title: string, completed: boolean, userId: number) => {
@@ -31,6 +31,6 @@ export class TaskService {
                 userId,
             },
         });
-        return response.data.data; 
+        return response.data.data;
     };
 }

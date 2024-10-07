@@ -11,41 +11,41 @@ export const loadTasks = createAsyncThunk<TaskProps[]>(
 
 export const addTask = createAsyncThunk<TaskProps, { title: string; userId: number }>(
     'tasks/addTask',
-    async function({ title, userId }) {
+    async function ({ title, userId }) {
         return await TaskService.addTask(title, userId);
     }
 );
 
 export const deleteTask = createAsyncThunk<void, { id: number }>(
     'tasks/deleteTask',
-    async function({ id }) {
-      await TaskService.deleteTask(id);
+    async function ({ id }) {
+        await TaskService.deleteTask(id);
     }
 );
-  
-export const updateTask = createAsyncThunk<TaskProps, { id: number; title: string , completed : boolean, userId: number}>(
+
+export const updateTask = createAsyncThunk<TaskProps, { id: number; title: string, completed: boolean, userId: number }>(
     'tasks/updateTask',
-    async function({ id, title, completed, userId}) {
-        const taskToUpdate = await TaskService.updateTask(id, title, completed, userId); 
+    async function ({ id, title, completed, userId }) {
+        const taskToUpdate = await TaskService.updateTask(id, title, completed, userId);
         return taskToUpdate;
     }
 );
 
 
-const todoSlice =  createSlice({
+const todoSlice = createSlice({
     name: 'todo',
     initialState: [] as TaskProps[],
     reducers: {
         toggleTask: (state, action: PayloadAction<number>) => {
             const task = state.find(task => task.id === action.payload)
-            if(task){
+            if (task) {
                 task.completed = !task.completed
             }
         },
-        markAllTasks: (state, action:PayloadAction<number | null>) => {
+        markAllTasks: (state, action: PayloadAction<number | null>) => {
             const userId = action.payload;
             state.forEach(task => {
-                if(task.userId === userId){
+                if (task.userId === userId) {
                     task.completed = true
                 }
             })

@@ -21,7 +21,7 @@ const Task: React.FC<TaskProps> = ({ id, title, completed, userId, onToggle, onD
     return (
         <TaskContainer>
             <TaskContent>
-            <TaskTitle completed={completed}>{title}</TaskTitle>
+                <TaskTitle completed={completed}>{title}</TaskTitle>
                 <ButtonContainer>
                     <Checkbox type="checkbox" checked={completed} onChange={handleToggle} />
                     <Button onClick={() => onDelete(id)}>Delete</Button>
