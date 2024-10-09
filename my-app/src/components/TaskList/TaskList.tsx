@@ -5,10 +5,10 @@ import UserSelect from '../TaskSelectUser/TaskSelectUser';
 import { TasksContainer, TasksList, ListTitle, ButtonContainer } from './TaskListStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../state/store';
-import { loadTasks, markAllTasks, toggleTask, addTask as addTaskAction, deleteTask, updateTask } from '../../state/todoSlice';
+import { loadTasks, markAllTasks, toggleTask, addTask, deleteTask, updateTask } from '../../state/todoSlice';
 
 const TaskList: React.FC = () => {
-    const dispatch: AppDispatch = useDispatch(); 
+    const dispatch: AppDispatch = useDispatch();
     const tasks = useSelector((state: RootState) => state.tasks);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [filterTasks, setFilterTasks] = useState(tasks);
@@ -27,27 +27,25 @@ const TaskList: React.FC = () => {
 
     const handleAddTask = () => {
         if (selectedUserId === null) {
-            alert('Please select a user before adding a task.');
-            return;
+            setSelectedUserId(1);
         }
-    
+
         const title = prompt('Enter a task title');
-        if (title && selectedUserId) {
-            dispatch(addTaskAction({ title, userId: selectedUserId }));
+        if (title) {
+            const userId = selectedUserId || 1;
+            dispatch(addTask({ title, userId }));
         }
     };
-    
 
     const deleteMarks = async () => {
         const tasksToDelete = tasks.filter(task => task.completed && (!selectedUserId || task.userId === selectedUserId));
         try {
-            await Promise.all(tasksToDelete.map(task => dispatch(deleteTask({id : task.id}))));
-            
+            await Promise.all(tasksToDelete.map(task => dispatch(deleteTask({ documentId: task.documentId }))));
+
         } catch (error) {
             console.error('Error deleting tasks', error);
         }
     };
-    
 
     return (
         <TasksContainer>
@@ -56,17 +54,17 @@ const TaskList: React.FC = () => {
                 <button onClick={handleAddTask}>Add Task</button>
                 <button onClick={() => dispatch(markAllTasks(selectedUserId))}>Mark All</button>
                 <button onClick={() => dispatch(() => deleteMarks())}>Delete Completed</button>
-                <UserSelect userIds={Array.from(new Set(tasks.map(task => task.userId)))} 
-                selectedUserId={selectedUserId} 
-                onUserChange={setSelectedUserId} />
+                <UserSelect userIds={Array.from(new Set(tasks.map(task => task.userId)))}
+                    selectedUserId={selectedUserId}
+                    onUserChange={setSelectedUserId} />
             </ButtonContainer>
             <TasksList>
                 {filterTasks.map(task => (
-                    <Task key={task.id} 
-                    {...task} 
-                    onToggle={() => dispatch(toggleTask(task.id))} 
-                    onEdit={(id, newTitle) => dispatch(updateTask({id, title : newTitle, userId: task.userId, completed: task.completed}))}
-                    onDelete={() => dispatch(deleteTask({id : task.id}))} />
+                    <Task key={task.documentId}
+                        {...task}
+                        onToggle={() => dispatch(toggleTask(task.documentId))}
+                        onEdit={(documentId, newTitle) => dispatch(updateTask({ documentId, title: newTitle, userId: task.userId, completed: task.completed }))}
+                        onDelete={() => dispatch(deleteTask({ documentId: task.documentId }))} />
                 ))}
             </TasksList>
         </TasksContainer>

@@ -1,70 +1,40 @@
-import { BASE_URL } from "./Base.url";
+import axios from 'axios';
+import { BASE_URL } from './Base.url';
 
-export class TaskService{
-
+export class TaskService {
     static loadTasks = async () => {
-        const response = await fetch(BASE_URL, {
-            method: 'GET',
-        });
-        if (!response.ok) {
+        try {
+            const response = await axios.get(BASE_URL);
+            return response.data.data; 
+        } catch (error) {
+            console.error('Failed to fetch tasks', error);
             throw new Error('Failed to fetch tasks');
-    
         }
-        return response.json();
-        
     };
-    
-    static deleteTask = async (id: number) => {
-        const response = await fetch(`${BASE_URL}/${id}`, {
-            method: 'DELETE',
-        });
 
-        if (!response.ok) {
-            throw new Error('Failed to delete task');
-        }
-
-        return response.status === 204; 
+    static deleteTask = async (documentId: string) => {
+        await axios.delete(`${BASE_URL}/${documentId}`);
     };
 
     static addTask = async (title: string, userId: number) => {
-        const response = await fetch(BASE_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                title: title,
+        const response = await axios.post(BASE_URL, {
+            data: {
+                title,
                 completed: false,
-                userId: userId,
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+                userId,
             },
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to add task');
-        }
-
-        return response.json(); 
+        return response.data.data; 
     };
 
-    static updateTask = async(id:number, title: string, completed: boolean, userId: number) =>{
-        const response = await fetch(`${BASE_URL}/${id}`, {
-            method: "PUT",
-            body: JSON.stringify({
-                id,
+    static updateTask = async (documentId: string, title: string, completed: boolean, userId: number) => {
+        const response = await axios.put(`${BASE_URL}/${documentId}`, {
+            data: {
                 title,
                 completed,
-                userId
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+                userId,
             },
         });
-
-        if(!response.ok){
-            throw new Error("Failed to update task");
-        }
-
-        return response.json();
-    }
+        return response.data.data; 
+    };
 }
-
